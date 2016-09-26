@@ -1,0 +1,70 @@
+// neuralnetwork.cpp : 定义控制台应用程序的入口点。
+//
+
+#include "stdafx.h"
+#include "neural.h"
+#include<sstream>
+#include<time.h>
+//#include <fstream>
+//#include <stdio.h>
+//#include <stdlib.h>
+
+#define MAXNUM 2
+#define INPUTCOUNT 3
+#define OUTPUTCOUNT 1
+#define MAX_SAMPLES 10000
+//using namespace std;
+
+double input1[512][512];
+
+
+
+int _tmain(int argc, _TCHAR* argv[])
+{
+	unsigned int a[MAXNUM] = { 2,1 };
+	vector<unsigned int> v(MAXNUM);
+	for (int i = 0; i < MAXNUM; i++){
+		v[i] = a[i];
+	}
+	NeuralNet neuralnet(v,sigmond,2,1,1);
+
+	srand(time(NULL));
+
+	vector<vector<double>> vinput;
+	vector<vector<double>> voutput;
+	double max = -RAND_MAX;
+	for (int i = 0; i < 500; i++){
+		vinput.push_back(vector<double>(2));
+		voutput.push_back(vector<double>(1));
+		vinput[i][0] = rand();
+		vinput[i][1] = rand();
+		voutput[i][0] = 3*vinput[i][0]+2*vinput[i][1]+1;
+		max = max>=voutput[i][0] ? max : voutput[i][0];
+	}
+	if (max != 0){
+		for (int i = 0; i < 500; i++){
+			voutput[i][0] /= max;
+		}
+	}
+	
+	neuralnet.train(vinput, voutput);
+	//neuralnet.weightvisual();
+
+	for (int i = 0; i < 500; i++){
+		vinput[i][0] = rand();
+		vinput[i][1] = rand();
+		voutput[i][0] = 3 * vinput[i][0] + 2 * vinput[i][1] + 1;
+		max = max >= voutput[i][0] ? max : voutput[i][0];
+	}
+	if (max != 0){
+		for (int i = 0; i < 500; i++){
+			voutput[i][0] /= max;
+		}
+	}
+	neuralnet.test(vinput, voutput,max);
+
+	
+	system("pause");
+	return 0;
+}
+
